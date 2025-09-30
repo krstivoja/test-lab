@@ -33,22 +33,50 @@
     }
 
     return path.replace(/([MLHVCSQTAZ])\s*([^MLHVCSQTAZ]*)/gi, (match, command, coords) => {
-      const numbers = coords.match(/[+-]?([0-9]*[.])?[0-9]+/g) || [];
+      const numbers = coords.match(/[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?/g) || [];
+      const upper = command.toUpperCase();
+      const isRelative = command !== upper;
+
       const converted = numbers.map((num, index) => {
         const value = parseFloat(num);
-        const upper = command.toUpperCase();
 
-        if (upper === 'H' || (upper === 'M' && index % 2 === 0) ||
-            (upper === 'L' && index % 2 === 0) || (upper === 'C' && index % 2 === 0)) {
-          return (value / w).toFixed(4);
+        // For relative commands, don't normalize
+        if (isRelative) {
+          return num;
         }
 
-        if (upper === 'V' || (upper === 'M' && index % 2 === 1) ||
-            (upper === 'L' && index % 2 === 1) || (upper === 'C' && index % 2 === 1)) {
+        // Determine if this coordinate is X or Y based on command type
+        let isX = false;
+
+        if (upper === 'H') {
+          isX = true;
+        } else if (upper === 'V') {
+          isX = false;
+        } else if (upper === 'M' || upper === 'L' || upper === 'T') {
+          // Pairs: x y, x y, ...
+          isX = index % 2 === 0;
+        } else if (upper === 'C') {
+          // 6 values: x1 y1 x2 y2 x y
+          isX = index % 2 === 0;
+        } else if (upper === 'S' || upper === 'Q') {
+          // S: 4 values: x2 y2 x y
+          // Q: 4 values: x1 y1 x y
+          isX = index % 2 === 0;
+        } else if (upper === 'A') {
+          // 7 values: rx ry rotation large-arc sweep x y
+          // Normalize: rx(0), ry(1), x(5), y(6)
+          isX = (index === 0 || index === 5);
+          if (index === 1 || index === 6) isX = false;
+          if (index >= 2 && index <= 4) return num; // rotation and flags
+        } else if (upper === 'Z') {
+          return num;
+        }
+
+        if (isX) {
+          return (value / w).toFixed(4);
+        } else {
           return (value / h).toFixed(4);
         }
-
-        return num;
       });
 
       return command + ' ' + converted.join(' ');
