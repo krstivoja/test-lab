@@ -1,0 +1,97 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: system-ui, sans-serif;
+}
+h1 {
+    margin-bottom: 20px;
+}
+.grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 30px;
+}
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+textarea, input {
+    width: 100%;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+textarea {
+    height: 200px;
+    resize: vertical;
+}
+.preview-box {
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 20px;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+.preview-container {
+    position: relative;
+    display: inline-block;
+    max-width: 400px;
+}
+#previewImage {
+    display: block;
+    max-width: 100%;
+}
+.code-section {
+    position: relative;
+}
+pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 15px;
+    border-radius: 4px;
+    overflow: auto;
+    font-size: 12px;
+    max-height: 400px;
+    margin: 0;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.copy-btn:hover {
+    background: #005a9e;
+}
+.status {
+    margin-top: 20px;
+    padding: 15px;
+    background: #e8f5e9;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.error {
+    background: #ffebee;
+    color: #c62828;
+}
+.status-details {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
+}
