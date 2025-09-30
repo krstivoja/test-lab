@@ -55,62 +55,29 @@
     });
   }
 
-  function generateCode(parsed, imageUrl) {
-    return '<!DOCTYPE html>\n' +
-      '<html lang="en">\n' +
-      '<head>\n' +
-      '    <meta charset="UTF-8">\n' +
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-      '    <title>Masked Image</title>\n' +
-      '</head>\n' +
-      '<body>\n' +
-      '\n' +
-      '<div class="image-container">\n' +
-      '  <img src="' + imageUrl + '" alt="">\n' +
-      '</div>\n' +
-      '\n' +
-      '<style>\n' +
-      '.image-container {\n' +
-      '  position: relative;\n' +
-      '  display: inline-block;\n' +
-      '  max-width: 500px;\n' +
-      '  max-height: 500px;\n' +
-      '}\n' +
-      '\n' +
-      '.image-container img {\n' +
-      '  display: block;\n' +
-      '  mask-image: url(#myMask);\n' +
-      '  mask-size: 100% 100%;\n' +
-      '  max-width: 100%;\n' +
-      '}\n' +
-      '</style>\n' +
-      '\n' +
-      '<svg width="0" height="0">\n' +
-      '  <defs>\n' +
-      '    <mask id="myMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">\n' +
-      '      <path d="' + parsed.convertedPath + '" fill="white"/>\n' +
-      '    </mask>\n' +
-      '  </defs>\n' +
-      '</svg>\n' +
-      '\n' +
-      '</body>\n' +
-      '</html>';
-  }
-
   function buildMaskDataUrl(convertedPath) {
     const maskSvg = `<svg xmlns='http://www.w3.org/2000/svg'><defs><mask id='m' maskUnits='objectBoundingBox' maskContentUnits='objectBoundingBox'><path d='${convertedPath}' fill='white'/></mask></defs></svg>`;
     return `url("data:image/svg+xml,${encodeURIComponent(maskSvg)}#m")`;
   }
 
+  function buildCssSnippet() {
+    return `.image-container {\n  position: relative;\n  display: inline-block;\n  max-width: 500px;\n  max-height: 500px;\n}\n\n.image-container img {\n  display: block;\n  mask-image: url(#myMask);\n  mask-size: 100% 100%;\n  max-width: 100%;\n}`;
+  }
+
+  function buildSvgSnippet(convertedPath) {
+    return `<svg width="0" height="0">\n  <defs>\n    <mask id="myMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">\n      <path d="${convertedPath}" fill="white"/>\n    </mask>\n  </defs>\n</svg>`;
+  }
+
   function updatePreview(state) {
-    const { svgInput, imageUrlInput, statusDiv, codeOutput, previewBox } = state;
+    const { svgInput, imageUrlInput, statusDiv, cssOutput, svgOutput, previewBox } = state;
     const parsed = parseSvg(svgInput.value);
 
     if (!parsed) {
       statusDiv.style.display = 'block';
       statusDiv.className = 'status error';
       statusDiv.innerHTML = '<strong>✗ Invalid SVG format</strong><div class="status-details">Please paste a valid SVG with a viewBox and path element.</div>';
-      codeOutput.textContent = 'Invalid SVG format';
+      cssOutput.textContent = 'Invalid SVG format';
+      svgOutput.textContent = 'Invalid SVG format';
       previewBox.innerHTML = '<div style="color: #999;">Invalid SVG format</div>';
       return;
     }
@@ -119,7 +86,8 @@
     statusDiv.className = 'status';
     statusDiv.innerHTML = `<strong>✓ Conversion successful!</strong><div class="status-details">Original dimensions: ${parsed.width} × ${parsed.height} → Normalized to 0-1 range</div>`;
 
-    codeOutput.textContent = generateCode(parsed, imageUrlInput.value);
+    cssOutput.textContent = buildCssSnippet();
+    svgOutput.textContent = buildSvgSnippet(parsed.convertedPath);
 
     const maskDataUrl = buildMaskDataUrl(parsed.convertedPath);
     previewBox.innerHTML = '<div class="preview-container"><img id="previewImage" src="" alt="Masked preview"></div>';
@@ -140,16 +108,19 @@
     const svgInput = document.getElementById('svgInput');
     const imageUrlInput = document.getElementById('imageUrl');
     const statusDiv = document.getElementById('status');
-    const codeOutput = document.getElementById('codeOutput');
+    const cssOutput = document.getElementById('cssOutput');
+    const svgOutput = document.getElementById('svgOutput');
     const previewBox = document.getElementById('previewBox');
-    const copyButton = document.getElementById('copyButton');
+    const copyCssButton = document.getElementById('copyCssButton');
+    const copySvgButton = document.getElementById('copySvgButton');
 
-    const state = { svgInput, imageUrlInput, statusDiv, codeOutput, previewBox };
+    const state = { svgInput, imageUrlInput, statusDiv, cssOutput, svgOutput, previewBox };
     const debouncedUpdate = () => updatePreview(state);
 
     svgInput.addEventListener('input', debouncedUpdate);
     imageUrlInput.addEventListener('input', debouncedUpdate);
-    copyButton.addEventListener('click', () => copyCode(codeOutput));
+    copyCssButton.addEventListener('click', () => copyCode(cssOutput));
+    copySvgButton.addEventListener('click', () => copyCode(svgOutput));
 
     debouncedUpdate();
   }

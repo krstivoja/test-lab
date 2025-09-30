@@ -1,43 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SVG to Image Mask Converter</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>SVG to Image Mask Converter</h1>
-    
-    <div class="grid">
-        <div>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <div class="w-full min-h-full bg-yellow-400 flex">
+      <div class="content">
+        <h1 class="text-5xl font-bold">SVG to Image Mask Converter</h1>
+
+        <div class="grid">
+          <div>
             <h2>Paste Your SVG</h2>
-            <textarea id="svgInput"><svg width="401" height="592" viewBox="0 0 401 592" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M401 36.826C401 26.977 393.266 18.8635 383.429 18.3916L19.3399 0.927661C8.81203 0.42268 0 8.82216 0 19.3621V572.652C0 583.168 8.77485 591.559 19.2811 591.089L383.37 574.789C393.232 574.348 401 566.224 401 556.352V36.826Z" fill="#FF0000"/>
-</svg></textarea>
-            
-            <h2 style="margin-top: 20px;">Image URL</h2>
-            <input type="text" id="imageUrl" value="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800">
-        </div>
-        
-        <div>
+
+            <h2 style="margin-top: 20px">Image URL</h2>
+            <input
+              type="text"
+              id="imageUrl"
+              value="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
+            />
+          </div>
+
+          <div>
             <h2>Preview</h2>
             <div class="preview-box" id="previewBox">
-                <div class="preview-container">
-                    <img id="previewImage" src="" alt="Masked preview">
+              <div class="preview-container">
+                <img id="previewImage" src="" alt="Masked preview" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p>Replace SVG Code</p>
+
+        <textarea
+          id="svgInput"
+          class="min-w-full bg-black text-white p-12 border !border-slate-600 grow rounded"
+        >
+<svg width="401" height="592" viewBox="0 0 401 592" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M401 36.826C401 26.977 393.266 18.8635 383.429 18.3916L19.3399 0.927661C8.81203 0.42268 0 8.82216 0 19.3621V572.652C0 583.168 8.77485 591.559 19.2811 591.089L383.37 574.789C393.232 574.348 401 566.224 401 556.352V36.826Z" fill="#FF0000"/>
+</svg>
+</textarea
+        >
+
+        <div id="status" class="status" style="display: none"></div>
+      </div>
+      <div
+        class="h-screen p-6 bg-slate-800 text-slate-400 flex flex-col gap-4 min-w-1/3"
+      >
+    <div class="code-section">
+        <h2>Generated Code</h2>
+        <div class="code-grid">
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span>CSS</span>
+                    <button id="copyCssButton" class="copy-btn">Copy CSS</button>
                 </div>
+                <pre id="cssOutput"></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span>Converted SVG</span>
+                    <button id="copySvgButton" class="copy-btn">Copy SVG</button>
+                </div>
+                <pre id="svgOutput"></pre>
             </div>
         </div>
     </div>
-    
-    <div class="code-section">
-        <h2>Generated HTML Code</h2>
-        <pre id="codeOutput"></pre>
-        <button id="copyButton" class="copy-btn">Copy Code</button>
+      </div>
     </div>
-    
-    <div id="status" class="status" style="display: none;"></div>
 
     <script src="index.js" defer></script>
-</body>
+  </body>
 </html>
